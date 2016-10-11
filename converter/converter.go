@@ -12,23 +12,27 @@ type RatesDef struct {
 	Rates map[string]float64 `json:"rates"`
 }
 
-func FetchConfiguration(url string) (*RatesDef, error) {
-	resp, err := http.Get(url)
-	if err != nil {
-		return nil, fmt.Errorf("Failed to fetch rates configuration url: %v", err)
-	}
-
-	rates := &RatesDef{}
-	if err := json.NewDecoder(resp.Body).Decode(rates); err != nil {
-		return nil, fmt.Errorf("Failed to parse rates configuration: %v", err)
-	}
-
-	return rates, nil
+type ConverterService struct {
+	RatesDef *RatesDef
 }
 
-func Convert(amount float64, rates *RatesDef) map[string]float64 {
+func (c *ConverterService) FetchConfiguration(url string) error {
+	resp, err := http.Get(url)
+	if err != nil {
+		return fmt.Errorf("Failed to fetch rates configuration url: %v", err)
+	}
+
+	c.RatesDef = &RatesDef{}
+	if err := json.NewDecoder(resp.Body).Decode(c.RatesDef); err != nil {
+		return fmt.Errorf("Failed to parse rates configuration: %v", err)
+	}
+
+	return nil
+}
+
+func (c *ConverterService) Convert(amount float64) map[string]float64 {
 	conversions := map[string]float64{}
-	for currency, rate := range rates.Rates {
+	for currency, rate := range c.RatesDef.Rates {
 		conversions[currency] = amount * rate
 	}
 	return conversions
