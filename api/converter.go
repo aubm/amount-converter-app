@@ -9,11 +9,15 @@ import (
 )
 
 type ConverterHandlers struct {
-	Converter *converter.ConverterService `inject:""`
+	Converter interface {
+		FetchConfiguration(url string) error
+		RatesDef() *converter.RatesDef
+		Convert(amount float64) map[string]float64
+	} `inject:""`
 }
 
 func (h *ConverterHandlers) ConvertAmount(w http.ResponseWriter, r *http.Request) {
-	if h.Converter.RatesDef == nil {
+	if h.Converter.RatesDef() == nil {
 		if err := h.Converter.FetchConfiguration(API_URL); err != nil {
 			log.Printf("Failed to init rates cache configuration: %v", err)
 			writeError(w, SERVER_ERROR, 500)
