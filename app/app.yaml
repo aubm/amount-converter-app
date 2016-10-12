@@ -1,0 +1,9 @@
+application: amount-converter-app
+service: default
+runtime: go
+api_version: go1
+version: beta-001
+
+handlers:
+- url: /.*
+  script: _go_app

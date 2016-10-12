@@ -4,20 +4,30 @@ import (
 	"net/http"
 	"net/http/httptest"
 
-	"github.com/aubm/amount-converter-app/converter/test"
+	apiTest "github.com/aubm/amount-converter-app/api/test"
+	converterTest "github.com/aubm/amount-converter-app/converter/test"
+	utilsTest "github.com/aubm/amount-converter-app/utils/test"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
 
 var _ = Describe("ConverterHandlers", func() {
 
-	var mockConverterService *test.MockConverterService
+	var mockContextProvider *apiTest.MockContextProvider
+	var mockConverterService *converterTest.MockConverterService
+	var mockLogger *utilsTest.MockLogger
 	var converterHandlers ConverterHandlers
 	var response *httptest.ResponseRecorder
 
 	BeforeEach(func() {
-		mockConverterService = &test.MockConverterService{}
-		converterHandlers = ConverterHandlers{Converter: mockConverterService}
+		mockConverterService = &converterTest.MockConverterService{}
+		mockContextProvider = &apiTest.MockContextProvider{}
+		mockLogger = &utilsTest.MockLogger{}
+		converterHandlers = ConverterHandlers{
+			Converter: mockConverterService,
+			Ctx:       mockContextProvider,
+			Logger:    mockLogger,
+		}
 		response = httptest.NewRecorder()
 	})
 

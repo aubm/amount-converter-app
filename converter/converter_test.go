@@ -5,8 +5,10 @@ import (
 	"net/http"
 	"net/http/httptest"
 
+	utilsTest "github.com/aubm/amount-converter-app/utils/test"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+	"golang.org/x/net/context"
 )
 
 var _ = Describe("ConverterService", func() {
@@ -16,6 +18,7 @@ var _ = Describe("ConverterService", func() {
 
 	BeforeEach(func() {
 		converterService = ConverterService{
+			HTTP: &utilsTest.MockHttpClientFactory{},
 			ratesDef: &RatesDef{
 				Rates: map[string]float64{
 					"AUD": 1.4679,
@@ -40,7 +43,9 @@ var _ = Describe("ConverterService", func() {
 	})
 
 	It("should fetch the configuration from the server", func() {
-		converterService.FetchConfiguration(server.URL)
+		ctx := context.Background()
+
+		converterService.FetchConfiguration(ctx, server.URL)
 
 		Expect(converterService.RatesDef()).To(Equal(&RatesDef{
 			Base: "EUR",

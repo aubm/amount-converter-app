@@ -3,6 +3,9 @@ package api
 import (
 	"encoding/json"
 	"net/http"
+
+	"golang.org/x/net/context"
+	"google.golang.org/appengine"
 )
 
 const (
@@ -26,4 +29,14 @@ func writeJSON(w http.ResponseWriter, data interface{}, statusCode int) {
 	w.WriteHeader(statusCode)
 
 	w.Write(b)
+}
+
+type ContextProviderInterface interface {
+	New(r *http.Request) context.Context
+}
+
+type ContextProvider struct{}
+
+func (p ContextProvider) New(r *http.Request) context.Context {
+	return appengine.NewContext(r)
 }

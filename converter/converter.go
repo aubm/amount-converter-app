@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+
+	"golang.org/x/net/context"
 )
 
 type RatesDef struct {
@@ -13,6 +15,9 @@ type RatesDef struct {
 }
 
 type ConverterService struct {
+	HTTP interface {
+		Client(ctx context.Context) *http.Client
+	} `inject:""`
 	ratesDef *RatesDef
 }
 
@@ -20,8 +25,8 @@ func (c *ConverterService) RatesDef() *RatesDef {
 	return c.ratesDef
 }
 
-func (c *ConverterService) FetchConfiguration(url string) error {
-	resp, err := http.Get(url)
+func (c *ConverterService) FetchConfiguration(ctx context.Context, url string) error {
+	resp, err := c.HTTP.Client(ctx).Get(url)
 	if err != nil {
 		return fmt.Errorf("Failed to fetch rates configuration url: %v", err)
 	}

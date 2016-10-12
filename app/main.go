@@ -6,6 +6,7 @@ import (
 
 	"github.com/aubm/amount-converter-app/api"
 	"github.com/aubm/amount-converter-app/converter"
+	"github.com/aubm/amount-converter-app/utils"
 	"github.com/facebookgo/inject"
 )
 
@@ -15,11 +16,17 @@ func init() {
 	converterHandlers := &api.ConverterHandlers{}
 	fetchConvertAmountConfigurationAdapter := &api.FetchConvertAmountConfigurationAdapter{}
 	converterService := &converter.ConverterService{}
+	logger := &utils.Logger{}
+	contextProvider := &api.ContextProvider{}
+	httpClientFactory := &utils.HttpClientFactory{}
 
 	if err := inject.Populate(
 		converterHandlers,
 		converterService,
 		fetchConvertAmountConfigurationAdapter,
+		logger,
+		contextProvider,
+		httpClientFactory,
 	); err != nil {
 		panic(err)
 	}
