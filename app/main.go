@@ -13,13 +13,18 @@ const ADDR = ":8080"
 
 func init() {
 	converterHandlers := &api.ConverterHandlers{}
+	fetchConvertAmountConfigurationAdapter := &api.FetchConvertAmountConfigurationAdapter{}
 	converterService := &converter.ConverterService{}
 
-	if err := inject.Populate(converterHandlers, converterService); err != nil {
+	if err := inject.Populate(
+		converterHandlers,
+		converterService,
+		fetchConvertAmountConfigurationAdapter,
+	); err != nil {
 		panic(err)
 	}
 
-	http.HandleFunc("/convert", converterHandlers.ConvertAmount)
+	http.Handle("/convert", api.Adapt(http.HandlerFunc(converterHandlers.ConvertAmount), fetchConvertAmountConfigurationAdapter))
 }
 
 func main() {

@@ -4,7 +4,6 @@ import (
 	"net/http"
 	"net/http/httptest"
 
-	"github.com/aubm/amount-converter-app/converter"
 	"github.com/aubm/amount-converter-app/converter/test"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -18,7 +17,6 @@ var _ = Describe("ConverterHandlers", func() {
 
 	BeforeEach(func() {
 		mockConverterService = &test.MockConverterService{}
-		mockConverterService.On("RatesDef").Return(&converter.RatesDef{})
 		converterHandlers = ConverterHandlers{Converter: mockConverterService}
 		response = httptest.NewRecorder()
 	})
